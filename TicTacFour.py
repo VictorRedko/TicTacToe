@@ -1,99 +1,170 @@
-def printBoard(b):
-  new = b.copy()
-  for n in range(16): 
-    if new[n] == None: new[n] = n+1
-  print('')
-  print(new[0],new[1],new[2],new[3],'\n',sep='\t')
-  print(new[4],new[5],new[6],new[7],'\n',sep='\t')
-  print(new[8],new[9],new[10],new[11],'\n',sep="\t")
-  print(new[12],new[13],new[14],new[15],sep="\t")
+def print_board(board):
+    """Prints the board."""
+    board_copy = board.copy()
+    for n in range(16): 
+        if board_copy[n] is None: board_copy[n] = n+1
+    print('')
+    print('\n {}\t{}\t{}\n'.format(board_copy[0],board_copy[1],
+                                   board_copy[2],board_copy[3]))
+    print('\n {}\t{}\t{}\n'.format(board_copy[4],board_copy[5],
+                                   board_copy[6],board_copy[7]))
+    print('\n {}\t{}\t{}\n'.format(board_copy[8],board_copy[9],
+                                   board_copy[10],board_copy[11]))
+    print('\n {}\t{}\t{}\n'.format(board_copy[12],board_copy[13],
+                                   board_copy[14],board_copy[15]))
 
-def win(b):
-  if b[0] == b[1] == b[2] == b[3] != None:
-    if b[0] == 'X': return 1
-    else: return 2
-  elif b[4] == b[5] == b[6] == b[7] != None:
-    if b[4] == 'X': return 1
-    else: return 2
-  elif b[8] == b[9] == b[10] == b[11] != None:
-    if b[8] == 'X': return 1
-    else: return 2
-  elif b[12] == b[13] == b[14] == b[15] != None:
-    if b[12] == 'X': return 1
-  elif b[0] == b[4] == b[8] == b[12] != None:
-    if b[0] == 'X': return 1
-    else: return 2
-  elif b[1] == b[5] == b[9] == b[13] != None:
-    if b[1] == 'X': return 1
-    else: return 2
-  elif b[2] == b[6] == b[10] == b[14] != None:
-    if b[2] == 'X': return 1
-    else: return 2
-  elif b[3] == b[7] == b[11] == b[15] != None:
-    if b[3] == 'X': return 1
-    else: return 2
-  elif b[0] == b[5] == b[10] == b[15] != None:
-    if b[0] == 'X': return 1
-    else: return 2
-  elif b[3] == b[6] == b[9] == b[12] != None:
-    if b[3] == 'X': return 1
-    else: return 2
-  else: return 0
+def game_won(board):
+    """Determines whether the game is over yet.
+    
+    Checks every row, column, and diagonal to see if they are equal. If yes,
+    and if they are nonempty, it returns the code corresponding to the winner,
+    be it X or O. Otherwise, it returns the code for an unfinished game.
+    
+    Args:
+        board: The board represented as a list.
+        
+    Returns:
+        A code, between 0, 1, and 2, based on the end condition:
+        
+        0: The game is not yet over.
+        1: X has won.
+        2: O has won.
+    """
+    
+    if board[0] == board[1] == board[2] == board[3] is not None:
+        if board[0] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[4] == board[5] == board[6] == board[7] is not None:
+        if board[4] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[8] == board[9] == board[10] == board[11] is not None:
+        if board[8] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[12] == board[13] == board[14] == board[15] is not None:
+        if board[12] == 'X': 
+            return 1
+        else:
+            return 2
+    elif board[0] == board[4] == board[8] == board[12] is not None:
+        if board[0] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[1] == board[5] == board[9] == board[13] is not None:
+        if board[1] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[2] == board[6] == board[10] == board[14] is not None:
+        if board[2] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[3] == board[7] == board[11] == board[15] is not None:
+        if board[3] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[0] == board[5] == board[10] == board[15] is not None:
+        if board[0] == 'X': 
+            return 1
+        else: 
+            return 2
+    elif board[3] == board[6] == board[9] == board[12] is not None:
+        if board[3] == 'X': 
+            return 1
+        else: 
+            return 2
+    else: 
+        return 0
 
-def tie(b):
-  empty = [n for n in b if n == None]
-  return len(empty) == 0
+def is_tie(board):
+    empty_tiles = [x for x in board if x is None]
+    return len(empty_tiles) == 0
 
-def alphabeta(b,p,alpha=(float('-inf'),16),beta=(float('inf'),16),ply=9):
-  if ply == 0:
-    if win(b) == 1: return (-1,100)
-    if win(b) == 2: return (1,100)
-    if win(b) == 0 or tie(b): return (0,100)
-  if win(b) == 1: return (-1,100)
-  if win(b) == 2: return (1,100)
-  if tie(b): return (0,100)
-  playSign = 'n'
-  if p == 1:
-    playSign = 'X'
-  else:
-    playSign = 'O'
-  for n in [i for i in range(16) if b[i] == None]:
-    b[n] = playSign
-    val = (alphabeta(b,(p+1)%2,alpha,beta,ply-1)[0],n)
-    b[n] = None
-    if p == 0:
-      if val[0] > alpha[0]: alpha = val
-      if alpha[0] >= beta[0]: return beta
+def alpha_beta(board, player, alpha=(float('-inf'), 16), 
+               beta=(float('inf'), 16), ply=9):
+    """Returns optimal move based on the current board.
+    
+    Using the Minimax algorithm, finds the optimal move based on the current
+    board. Recurses until it finds a game over state (won, lost, or tied) and
+    then evaluates the utility of the result (1, -1, or 0, respectively).
+    
+    Args:
+        board: The list which corresponds to the game board at the moment of
+            method call.
+        player: A binary value which represents whether X or O is going with 1
+            or 0, respectively.
+            
+    Returns:
+        A tuple which includes the board position which corresponds to the
+        optimal move and its utility score.
+    """
+    
+    if ply == 0:
+        if game_won(board) == 1: return (-1,100)
+        if game_won(board) == 2: return (1,100)
+        if game_won(board) == 0 or is_tie(board): return (0,100)
+    if game_won(board) == 1: return (-1,100)
+    if game_won(board) == 2: return (1,100)
+    if is_tie(board): return (0,100)
+    play_sign = 'n'
+    if player == 1:
+        play_sign = 'X'
     else:
-      if val[0] < beta[0]: beta = val
-      if beta[0] <= alpha[0]: return alpha
-  if p == 0: return alpha
-  else: return beta
+        play_sign = 'O'
+    for y in [x for x in range(16) if board[x] is None]:
+        board[y] = playSign
+        utility = (alpha_beta(board, (player + 1) % 2,
+                         alpha, beta, ply - 1)[0], y)
+        board[y] = None
+        if player == 0:
+            if utility[0] > alpha[0]: alpha = utility
+            if alpha[0] >= beta[0]: return beta
+        else:
+            if utility[0] < beta[0]: beta = utility
+            if beta[0] <= alpha[0]: return alpha
+    if player == 0: 
+        return alpha
+    else: 
+        return beta
 
-board = [None]*16
-printBoard(board)
-gOver = False
-turns = 0
-while not gOver:
-  playerMove = int(input("\nPlayer: please pick a free space. "))
-  while playerMove > 16 or playerMove < 1:
-    playerMove = int(input("Invalid input, please pick a free space between 1 and 16. "))
-  while board[playerMove-1] != None: playerMove = int(input("Space not free. "))
-  board[playerMove-1] = 'X'
-  if win(board) == 1:
-    print("Congrats, X has won!")
-    printBoard(board)
-    break
-  if tie(board):
-    print("The game has ended in a tie!")
-    printBoard(board)
-    break
-  board[alphabeta(board,0)[1]] = 'O'
-  printBoard(board)
-  if win(board) == 2:
-    print("Congrats, O has won!")
-    gOver = True
-  turns+=1
-  if turns == 8:
-    print("The game has ended in a tie!")
-    gOver = True
+def main():
+    game_board = [None] * 16
+    print_board(game_board)
+    game_over = False
+
+    while not game_over:
+        player_move = int(input('\nPlayer: please pick a free space. '))
+        while player_move > 16 or player_move < 1:
+            player_move = int(input('Invalid input, please pick a free space between 1 and 9. '))
+
+        while game_board[player_move - 1] is not None: 
+            player_move = int(input('Space not free. '))
+
+        game_board[player_move - 1] = 'X'
+        if game_won(game_board) == 1:
+            print('Congrats, X has won!')
+            print_board(game_board)
+            break
+
+        if is_tie(game_board):
+            print('The game has ended in a tie!')
+            print_board(game_board)
+            break
+
+        game_board[alpha_beta(game_board, 0)[1]] = 'O'
+        print_board(game_board)
+        if game_won(game_board) == 2:
+            print('Congrats, O has won!')
+            game_over = True
+
+
+if __name__ == '__main__':
+    main()
