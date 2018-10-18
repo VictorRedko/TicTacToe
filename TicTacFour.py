@@ -143,7 +143,7 @@ def main():
     while not game_over:
         player_move = int(input('\nPlayer: please pick a free space. '))
         while player_move > 16 or player_move < 1:
-            player_move = int(input('Invalid input, please pick a free space between 1 and 9. '))
+            player_move = int(input('Invalid input, please pick a free space between 1 and 16. '))
 
         while game_board[player_move - 1] is not None: 
             player_move = int(input('Space not free. '))
